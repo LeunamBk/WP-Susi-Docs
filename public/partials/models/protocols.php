@@ -70,7 +70,7 @@ class ProtocolsModel {
 
     }
 
-    public static function getProtocolsByTime($mode, $year, $month)
+    public static function getProtocolsBySelect($mode, $year, $month)
     {
         // Get a db connection.
         global $wpdb;
@@ -92,7 +92,7 @@ class ProtocolsModel {
     }
 
 
-    public static function getProtocolsBySearch($mode, $search)
+    public static function getProtocolsBySearch($mode, $search, $year, $month)
     {
 
         // Get a db connection.
@@ -105,9 +105,12 @@ class ProtocolsModel {
         $query = $wpdb->prepare(
             " SELECT id, DATE_FORMAT(date,'%%d-%%m-%%Y') as date, context, body    ".
             " FROM ".SUSITABLE                                                      .
-            " WHERE context LIKE %s and (body LIKE %s)                             ".
+            " WHERE context LIKE %s                                                ".
+            " AND (body LIKE %s)                                                   ".
+            " AND (YEAR(date) LIKE %s)                                             ".
+            " AND (MONTH(date) LIKE %s)                                            ".
             " ORDER BY DATE_FORMAT(date,'%%Y-%%m-%%d') desc;                       ",
-            array($mode, $searchEsc));
+            array($mode, $searchEsc, $year, $month));
 
         // Load and fetch data
         $protocols = $wpdb->get_results($query, OBJECT);
@@ -124,7 +127,7 @@ class ProtocolsModel {
 
     }
 
-    public static function getProtocolText($id = 1)
+    public static function getProtocolText($id = 1, $search = false)
     {
 
         // get susi table instance in
@@ -142,10 +145,12 @@ class ProtocolsModel {
         $protocols = $wpdb->get_results((string) $query, OBJECT);
 
         return $protocols[0]->body;
+
+
     }
 
+    // for every paragraph
     private static function getSearchTextSnippets($protocols, $search){
-
 
         // IMPORTANT: ensure proper string encoding!
         $search = utf8_encode($search);
@@ -172,7 +177,10 @@ class ProtocolsModel {
             }
 
             if(!empty($snippets)){
-                $protocolsSearchSnippets[$protocol->id] = $snippets;
+                $protocolsSearchSnippets[$protocol->id] = [ 'id' => $protocol->id,
+                                                            'context'=> $protocol->context,
+                                                            'date' => $protocol->date,
+                                                            'text' => $snippets];
             }
         }
 

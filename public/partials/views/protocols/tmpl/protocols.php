@@ -50,7 +50,7 @@ wp_enqueue_script( 'docs-controllers', $ASSETSPATH . "js/controllers.js", array(
                                     <select name="mySelect" id="mySelect" class=" header-elements-margin"
                                             ng-options="option.name for option in data.availableOptions track by option.id"
                                             ng-model="data.selectedOption"
-                                            ng-change="change()"></select>
+                                            ng-change="filterDocs()"></select>
                                 </div>
 
                                 <div class="col-sm-3">
@@ -63,13 +63,13 @@ wp_enqueue_script( 'docs-controllers', $ASSETSPATH . "js/controllers.js", array(
                                         <select class="select-month header-elements-margin" name="select-month"
                                                 ng-options="option.name for option in data.monthList track by option.id"
                                                 ng-model="data.selectedMonth"
-                                                ng-change="filterByTime()">
+                                                ng-change="filterDocs()">
                                         </select>
 
                                         <select class="select-year header-elements-margin" name="select-year"
                                                 ng-options="option.year for option in yearsList track by option.year"
                                                 ng-model="data.selectedYear"
-                                                ng-change="filterByTime()">
+                                                ng-change="filterDocs()">
                                         </select>
 
                                     </div>
@@ -82,9 +82,13 @@ wp_enqueue_script( 'docs-controllers', $ASSETSPATH . "js/controllers.js", array(
                                     <div class="col-sm-3">
 
                                         <div class="input-group">
-                                            <label class=" header-elements-margin" >Search:</label>
-                                            <input type="text" ng-model="filterTasks" class="search header-elements-margin" ng-keyup="$event.keyCode == 13 && search()" placeholder="Filter Documents">
-                                            <button type="submit" class="btn btn-default" name="submit" id="searchsubmit" value="Go" ng-click="search()">
+                                            <label class=" header-elements-margin" >Suche:</label>
+                                            <br>
+                                            <input type="text" ng-model="filterTasks" class="search header-elements-margin" ng-keyup="$event.keyCode == 13 && filterDocs()" placeholder="Filter Documents">
+                                            <a class="clear" ng-click="clearSearch()">
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                            </a>
+                                            <button type="submit" class="btn btn-default" name="submit" id="searchsubmit" value="Go" ng-click="filterDocs()">
 						                    <span class="glyphicon glyphicon-search">
                                             </span>
                                             </button>
@@ -108,23 +112,29 @@ wp_enqueue_script( 'docs-controllers', $ASSETSPATH . "js/controllers.js", array(
                                 </div>
                             </form-->
 
-                            <div class="col-sm-3">
+                            <div class="col-sm-3 doc-select">
                                 <div class="task">
-                                    <label ng-repeat="task in tasks | filter : filterTask" class="checkbox" ng-class="{selected: task.id === idSelected}" ng-click="toggleStatus(task.id,task.STATUS, task.TASK)">
+                                    <label ng-repeat="task in tasks | filter : filterTask" class="checkbox" data-ng-class="{'active' : $first}" ng-init="$first && toggleStatus(task.id,task.STATUS, task.TASK)" ng-class="{selected: task.id === idSelected}" ng-click="toggleStatus(task.id,task.STATUS, task.TASK)">
                                         <span class="list-category">{{ dataModel.contextMap[task.context]}}</span><span class="list-date"><b>{{task.date}}</b></span>
                                         <!--a ng-click="deleteTask(task.ID)" class="pull-right"><i class="glyphicon glyphicon-trash"></i></a-->
                                     </label>
+
+                                    <label ng-repeat="task in searchTasks | filter : filterTask" class="checkbox"  ng-class="{selected: task.id === idSelected}" ng-click="toggleStatus(task.id,task.STATUS, task.TASK)">
+                                        <span class="list-category">{{ dataModel.contextMap[task.context]}}</span><span class="list-date"><b>{{task.date}}</b></span>
+                                        <!--a ng-click="deleteTask(task.ID)" class="pull-right"><i class="glyphicon glyphicon-trash"></i></a-->
+                                    </label>
+
                                 </div>
                             </div>
                             <div class="col-sm-9">
                                 <div class="protocol-textbox" ng-hide="hideFullProtocol">
-                                    <div id="formater" style="visibility:hidden;"></div>
+                                    <div class="formater" style="visibility:hidden;"></div>
                                     <div ng-bind-html="fullProtocol"></div>
                                 </div>
 
                                 <div class="protocol-textbox" ng-repeat="snippet in protocolsText"  ng-hide="!hideFullProtocol">
-                                    <div id="formater" style="visibility:hidden;"></div>
-                                    <div ng-bind-html="getSnippet(snippet)"></div>
+                                    <div class="formater search" ng-click="toggleStatus(snippet.id,snippet.STATUS, snippet.TASK)">{{ dataModel.contextMap[snippet.context]}} {{snippet.date}}</div>
+                                    <div ng-bind-html="getSnippet(snippet.text)"></div>
                                 </div>
 
                             </div>

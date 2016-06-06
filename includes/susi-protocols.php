@@ -284,16 +284,11 @@ class Susi_Protocols {
             die();
         });
 
-        add_action('wp_ajax_protocolsByCategory', function(){
-            echo ProtocolsControllerRequest::protocolsByCategory();
+        add_action('wp_ajax_protocolsBySelect', function(){
+            echo ProtocolsControllerRequest::protocolsBySelect();
             die();
         });
-
-        add_action('wp_ajax_protocolsByTime', function(){
-            echo ProtocolsControllerRequest::protocolsByTime();
-            die();
-        });
-
+		
         add_action('wp_ajax_protocolsBySearch', function(){
             echo ProtocolsControllerRequest::protocolsBySearch();
             die();

@@ -108,3 +108,30 @@ div.task label.selected{
 #docs-widget{
     margin-top:5%;
 }
+
+.doc-select{
+    overflow-y: scroll;
+    height: 500px;
+    direction: ltr;
+}
+
+.formater.search{
+    border: 1px solid #DDD;
+    background: #DDD;
+    border-left-width: 3px;
+    margin: -9px -9px 9px -15px;
+    cursor: pointer;
+}
+
+.formater.search:hover {
+   border: 1px solid #000000;
+}
+
+.glyphicon-remove{
+ margin-left:-25px;
+}
+
+#searchsubmit{
+    height: 26px;
+    margin-bottom: 3px;
+}
